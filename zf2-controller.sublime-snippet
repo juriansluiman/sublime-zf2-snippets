@@ -1,0 +1,254 @@
+<snippet>
+	<content><![CDATA[
+<?php
+
+namespace ${1:Namespace}\Controller;
+
+use ${1}\Repository\\${2:Entity} as Repository;
+use ${1}\Form\\${2}       as Form;
+use ${1}\Service\\${2}    as Service;
+use ${1}\Entity\\${2}     as ${2}Entity;
+use ${1}\Options\ModuleOptions;
+
+use Zend\Mvc\Controller\AbstractActionController;
+
+class ${2}Controller extends AbstractActionController
+{
+    /**
+     * @var Repository
+     */
+    protected \$repository;
+
+    /**
+     * @var Service
+     */
+    protected \$service;
+
+    /**
+     * @var Form
+     */
+    protected \$form;
+
+    /**
+     * @var ModuleOptions
+     */
+    protected \$options;
+
+    /**
+     * Constructor
+     *
+     * @param  Repository         \$repository
+     * @param  Service            \$service
+     * @param  Form               \$form
+     * @param  ModuleOptions|null \$options
+     * @return ${2}Controller
+     */
+    public function __construct(Repository \$repository, Service \$service, Form \$form, ModuleOptions \$options = null)
+    {
+        \$this->repository = \$repository;
+        \$this->service    = \$service;
+        \$this->form       = \$form;
+
+        if (null !== \$options) {
+            \$this->options = \$options;
+        }
+    }
+
+    /**
+     * Get service
+     *
+     * @return Service Service layer for ${2} entity
+     */
+    public function getService()
+    {
+        return \$this->service;
+    }
+
+    /**
+     * Get repository
+     *
+     * @return Repository Repository to query for ${2} entity
+     */
+    public function getRepository()
+    {
+        return \$this->repository;
+    }
+
+    /**
+     * Get form
+     *
+     * @return Form Form to update ${2} entity
+     */
+    public function getForm()
+    {
+        return \$this->form;
+    }
+
+    /**
+     * Get options
+     *
+     * @return Options Options for module ${1}
+     */
+    public function getOptions()
+    {
+        if (null === \$this->options) {
+            \$this->options = new ModuleOptions;
+        }
+
+        return \$this->options;
+    }
+
+    /**
+     * Index action
+     *
+     * List all ${2} entities
+     *
+     * @return array
+     */
+    public function indexAction()
+    {
+        \$${2/(.)/\L\1\E/g}s = \$this->getRepository()->findAll();
+
+        return array(
+            '${2/(.)/\L\1\E/g}s' => \$${2/(.)/\L\1\E/g}s,
+        );
+    }
+
+    /**
+     * View action
+     *
+     * View details of a single ${2} entity
+     *
+     * @return array
+     */
+    public function viewAction()
+    {
+        \$${2/(.)/\L\1\E/g} = \$this->get${2}();
+
+        return array(
+            '${2/(.)/\L\1\E/g}' => \$${2/(.)/\L\1\E/g},
+        );
+    }
+
+    /**
+     * Create action
+     *
+     * Create a new ${2} entity
+     *
+     * @return Response|array
+     */
+    public function createAction()
+    {
+        \$${2/(.)/\L\1\E/g} = \$this->get${2}(true);
+        \$form = \$this->getForm();
+        \$form->bind(\$${2/(.)/\L\1\E/g});
+
+        if (\$this->getRequest()->isPost()) {
+            \$data = \$this->getRequest()->getPost();
+            \$form->setData(\$data);
+
+            if (\$form->isValid()) {
+                // Bar is populated with form data
+                \$this->getService()->create(\$${2/(.)/\L\1\E/g});
+
+                return \$this->redirect()->toRoute('${2/(.)/\L\1\E/g}/view', array(
+                    '${2/(.)/\L\1\E/g}' => \$${2/(.)/\L\1\E/g}->getId(),
+                ));
+            }
+        }
+
+        return array(
+            'form' => \$form,
+        );
+    }
+
+    /**
+     * Update action
+     *
+     * Update an existing ${2} entity
+     *
+     * @return Response|array
+     */
+    public function updateAction()
+    {
+        \$${2/(.)/\L\1\E/g} = \$this->get${2}();
+        \$form = \$this->getForm();
+        \$form->bind(\$${2/(.)/\L\1\E/g});
+
+        if (\$this->getRequest()->isPost()) {
+            \$data = \$this->getRequest()->getPost();
+            \$form->setData(\$data);
+
+            if (\$form->isValid()) {
+                \$this->getService()->update(\$${2/(.)/\L\1\E/g});
+
+                return \$this->redirect()->toRoute('${2/(.)/\L\1\E/g}/view', array(
+                    '${2/(.)/\L\1\E/g}' => \$${2/(.)/\L\1\E/g}->getId(),
+                ));
+            }
+        }
+
+        return array(
+            '${2/(.)/\L\1\E/g}'  => \$${2/(.)/\L\1\E/g},
+            'form' => \$form,
+        );
+    }
+
+    /**
+     * Delete action
+     *
+     * Delete an existing ${2} entity
+     *
+     * @return Response
+     */
+    public function deleteAction()
+    {
+        if (!\$this->getRequest()->isPost()) {
+            \$this->getRequest()->setStatusCode(404);
+            return;
+        }
+
+        \$${2/(.)/\L\1\E/g} = \$this->get${2}();
+        \$this->getService()->delete(\$${2/(.)/\L\1\E/g});
+
+        return \$this->redirect()->toRoute('${2/(.)/\L\1\E/g}');
+    }
+
+    /**
+     * Get ${2}
+     *
+     * Get a ${2/(.)/\L\1\E/g} from the repository with a parameter from the route
+     * or create a new ${2} instance.
+     *
+     * @param  bool $create To create a new ${2} instance or not
+     * @throws Exception\\${2}NotFoundException
+     * @return ${2}
+     */
+    protected function get${2}(\$create = false)
+    {
+        if (true === \$create) {
+            \$${2/(.)/\L\1\E/g} = new ${2}Entity;
+            return \$${2/(.)/\L\1\E/g};
+        }
+
+        \$id  = \$this->params('${2/(.)/\L\1\E/g}');
+        \$${2/(.)/\L\1\E/g} = \$this->getRepository()->find(\$id);
+
+        if (null === \$${2/(.)/\L\1\E/g}) {
+            throw new Exception\\${2}NotFoundException(sprintf(
+                '${2} with id "%s" not found', \$id
+            ));
+        }
+
+        return \$${2/(.)/\L\1\E/g};
+    }
+}
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>zf-c</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.php</scope> -->
+    <!-- Optional: Description to show in the menu -->
+    <description>ZF2 CRUD controller</description>
+</snippet>

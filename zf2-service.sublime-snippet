@@ -1,0 +1,149 @@
+<snippet>
+	<content><![CDATA[
+<?php
+
+<?php
+
+namespace ${1:Namespace}\Service;
+
+use ${1:Namespace}\Entity\\${2:Entity}Interface;
+use Doctrine\ORM\EntityManager;
+
+use Zend\EventManager;
+
+class ${2} implements EventManager\EventManagerAwareInterface
+{
+    /**
+     * @var EntityManager
+     */
+    protected \$entityManager;
+
+    /**
+     * @var EventManager\EventManagerInterface
+     */
+    protected \$eventManager;
+
+    /**
+     * Constructor
+     *
+     * @param  EntityManager \$em
+     * @return ${2}
+     */
+    public function __construct(EntityManager \$em)
+    {
+        \$this->entityManager     = \$em;
+    }
+
+    /**
+     * Get Entity Manager
+     *
+     * @return EntityManager
+     */
+    public function getEntityManager()
+    {
+        return \$this->entityManager;
+    }
+
+    /**
+     * Create a new ${2}
+     *
+     * @param  ${2}Interface \$${2/(.)/\L\1\E/g} ${2} to create
+     * @return void
+     */
+    public function create(${2}Interface \$${2/(.)/\L\1\E/g})
+    {
+        \$this->trigger(__FUNCTION__ . '.pre', array('${2/(.)/\L\1\E/g}' => \$${2/(.)/\L\1\E/g}));
+
+        \$this->getEntityManager()->persist(\$${2/(.)/\L\1\E/g});
+        \$this->getEntityManager()->flush();
+
+        \$this->trigger(__FUNCTION__ . '.post', array('${2/(.)/\L\1\E/g}' => \$${2/(.)/\L\1\E/g}));
+    }
+
+    /**
+     * Update the ${2}
+     *
+     * @param  ${2}Interface \$${2/(.)/\L\1\E/g} ${2} to update
+     * @return void
+     */
+    public function update(${2}Interface \$${2/(.)/\L\1\E/g})
+    {
+        \$this->trigger(__FUNCTION__ . '.pre', array('${2/(.)/\L\1\E/g}' => \$${2/(.)/\L\1\E/g}));
+
+        \$this->getEntityManager()->flush();
+
+        \$this->trigger(__FUNCTION__ . '.post', array('${2/(.)/\L\1\E/g}' => \$${2/(.)/\L\1\E/g}));
+    }
+
+    /**
+     * Delete the ${2}
+     *
+     * @param  ${2}Interface \$${2/(.)/\L\1\E/g} ${2} to delete
+     * @return void
+     */
+    public function delete(${2}Interface \$${2/(.)/\L\1\E/g})
+    {
+        \$this->trigger(__FUNCTION__ . '.pre', array('${2/(.)/\L\1\E/g}' => \$${2/(.)/\L\1\E/g}));
+
+        \$this->getEntityManager()->remove(\$${2/(.)/\L\1\E/g});
+        \$this->getEntityManager()->flush();
+
+        \$this->trigger(__FUNCTION__ . '.post', array('${2/(.)/\L\1\E/g}' => \$${2/(.)/\L\1\E/g}));
+    }
+
+    /**
+     * Trigger an event in the Event Manager
+     *
+     * @param  string \$name       Name of the event to trigger
+     * @param  array  \$parameters Parameters for the event
+     * @return void
+     */
+    protected function trigger(\$name, array \$parameters = array())
+    {
+        if (!\$this->getEventManager() instanceof EventManager\EventManagerInterface) {
+            return;
+        }
+
+        \$event = new EventManager\Event;
+        \$event->setTarget(\$this);
+        \$event->setName(\$name);
+        \$event->setParams(\$parameters);
+
+        \$this->getEventManager()->trigger(\$event);
+    }
+
+    /**
+     * {@inheritdocs}
+     */
+    public function getEventManager()
+    {
+        if (null === \$this->eventManager) {
+            \$this->setEventManager(new EventManager\EventManager);
+        }
+        return \$this->eventManager;
+    }
+
+    /**
+     * {@inheritdocs}
+     */
+    public function setEventManager(EventManager\EventManagerInterface \$eventManager)
+    {
+        \$eventManager->setIdentifiers(array(
+            __CLASS__,
+            get_called_class(),
+        ));
+
+        \$this->eventManager = \$eventManager;
+        return \$this;
+    }
+
+}
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>zf-s</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.php</scope> -->
+    <!-- Optional: Description to show in the menu -->
+    <description>ZF2 Service</description>
+</snippet>
